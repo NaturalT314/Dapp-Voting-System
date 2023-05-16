@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.1 <0.9.0;
+
+contract Poll {
+    struct Candidate {
+        uint id;
+        string name;
+        uint voteCount;
+    }
+    //creates a mapping called voters that maps addresses to a bool value to track if they voted or not
+    mapping(address => bool) public voters;
+    // creates a mapping called candidates that maps a uint called the candidateID to candidates in our system
+    mapping(uint => Candidate) public candidates;
+    // 
+    uint8 public candidatesCount = 0;
+
+    constructor () public {
+        addCandidate("Hamza Saht");
+        addCandidate("Omar Hussein");
+        addCandidate("Badi Mohammad");
+        }
+
+    function addCandidate (string memory _name) private {
+        candidatesCount ++;
+        candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
+    }
+
+    function vote (uint8 _candidateId) public {
+        require(!voters[msg.sender], "You have already Voted");
+        require(_candidateId > 0 && _candidateId <= candidatesCount, "Please enter a valid candidate");
+        voters[msg.sender] = true;
+        candidates[_candidateId].voteCount++;
+    }
+    
+    function getCandidatesVoteCount(uint8 _candidateId) public view returns (uint)
+    {
+        return candidates[_candidateId].voteCount;
+    }
+}
