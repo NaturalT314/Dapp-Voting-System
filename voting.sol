@@ -11,27 +11,30 @@ contract Poll {
     mapping(address => bool) public voters;
     // creates a mapping called candidates that maps a uint called the candidateID to candidates in our system
     mapping(uint => Candidate) public candidates;
-    // 
+    // init candidatesCount to 0
     uint8 public candidatesCount = 0;
 
+    // add candidates to candidates mapping
     constructor () public {
         addCandidate("Hamza Saht");
         addCandidate("Omar Hussein");
         addCandidate("Badi Mohammad");
         }
-
+    // a function to add candidates to candidates mapping based on candidate ID
     function addCandidate (string memory _name) private {
         candidatesCount ++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
     }
 
     function vote (uint8 _candidateId) public {
+        // make sure the voter did not vote before
         require(!voters[msg.sender], "You have already Voted");
-        require(_candidateId > 0 && _candidateId <= candidatesCount, "Please enter a valid candidate");
         voters[msg.sender] = true;
+        // make sure the voter is voting for a valid candidate
+        require(_candidateId > 0 && _candidateId <= candidatesCount, "Please enter a valid candidate");
         candidates[_candidateId].voteCount++;
     }
-    
+    // a function to return a candidate's vote count
     function getCandidatesVoteCount(uint8 _candidateId) public view returns (uint)
     {
         return candidates[_candidateId].voteCount;
